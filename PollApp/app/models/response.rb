@@ -12,15 +12,21 @@ class Response < ActiveRecord::Base
     foreign_key: :user_id,
     class_name: :User
 
-  belongs_to :question,
-    primary_key: :id,
-    foreign_key: :question_id,
-    class_name: :Question
+  # belongs_to :question,
+  #   primary_key: :id,
+  #   foreign_key: :question_id,
+  #   class_name: :Question
 
+  has_one :question,
+    through: :answer_choice,
+    source: :question
 
+  def sibling_responses
+    question.responses
+  end
 
   def respondent_already_answered?
-    !question.responses.where(user_id: self.user_id).empty?
+    !sibling_responses.where(user_id: self.user_id).empty?
   end
 
   def respondent_is_author?
